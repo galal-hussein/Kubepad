@@ -1,4 +1,4 @@
-# Kubepad 🎹⎈
+# Kubepad ⎈
 
 <img src="images/kubepad-logo.png" alt="drawing" width="200"/>
 
