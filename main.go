@@ -96,7 +96,7 @@ var modes = []Mode{
 			"3-1": {Label: "cordon", Command: "kubectl cordon ", NoEnter: true},
 
 			"0-0": {Label: "curl", Command: "kubectl run curl --image=curlimages/curl -it --rm -- ", NoEnter: true},
-			"1-0": {Label: "netshoot", Command: "kubectl run netshoot --image=nicolaka/netshoot -it --rm -- bash"},
+			"1-0": {Label: "netshoot", Command: "kubectl run netshoot --image=nicolaka/netshoot -it --rm -- bash", NoEnter: true},
 			"2-0": {Label: "exec", Command: "kubectl exec -it ", NoEnter: true},
 			"3-0": {Label: "MODE", Command: ""},
 		},
@@ -215,16 +215,16 @@ func (kp *Kubepad) executeCommand(mapping KeyMapping) {
 	// Show on display
 	kp.display.ClearDisplay()
 
+	// Mode indicator
+	modeText := fmt.Sprintf("M: %s", modes[kp.currentMode].Name)
+	tinyfont.WriteLine(kp.display, kp.font, 2, 15, modeText, color.RGBA{150, 150, 150, 255})
+
 	// Label
 	labelText := fmt.Sprintf("[%s]", mapping.Label)
 	if mapping.NoEnter {
 		labelText += " ..." // Indicate waiting for input
 	}
-	tinyfont.WriteLine(kp.display, kp.font, 2, 15, labelText, color.RGBA{255, 255, 255, 255})
-
-	// Mode indicator
-	modeText := fmt.Sprintf("<%s>", modes[kp.currentMode].Name)
-	tinyfont.WriteLine(kp.display, kp.font, 2, 55, modeText, color.RGBA{150, 150, 150, 255})
+	tinyfont.WriteLine(kp.display, kp.font, 2, 55, labelText, color.RGBA{255, 255, 255, 255})
 
 	kp.display.Display()
 }
