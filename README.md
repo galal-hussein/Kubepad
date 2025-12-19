@@ -31,9 +31,10 @@ Using the [Ocreb modular Macropad design](https://www.thingiverse.com/thing:6450
 ### Pinout
 
 ```
-Key Matrix (4 rows × 3 columns):
-- Rows: GP10, GP11, GP12, GP13
-- Cols: GP14, GP15, GP16
+Key Matrix (3 rows × 4 columns):
+- Rows: GP10, GP11, GP12, GP13 (scanned as columns in code)
+- Cols: GP14, GP15, GP16 (scanned as rows in code)
+- Key format: row-col (e.g., "2-3" = physical row 2, column 3)
 
 OLED Display:
 - SDA: GP4
@@ -113,53 +114,44 @@ The Kubepad has 3 modes that you can cycle through by pressing the **MODE** butt
 
 #### Mode 0: kubectl (Basic Kubernetes)
 ```
-┌─────────┬─────────┬─────────┐
-│  pods   │  nodes  │   svc   │  ← Row 0-x
-│ get -A  │   get   │  get -A │
-├─────────┼─────────┼─────────┤
-│  logs*  │   all   │   top   │  ← Row 1-x
-│  -f     │  get -A │  nodes  │
-├─────────┼─────────┼─────────┤
-│ apply*  │ delete* │ busybox │  ← Row 2-x
-│   -f    │   pod   │   run   │
-├─────────┼─────────┼─────────┤
-│  desc*  │ version │  MODE   │  ← Row 3-x
-│describe │         │         │
-└─────────┴─────────┴─────────┘
+┌─────────┬─────────┬─────────┬─────────┐
+│  pods   │  nodes  │   svc   │  desc*  │
+│ get -A  │   get   │  get -A │describe │
+├─────────┼─────────┼─────────┼─────────┤
+│  logs*  │   all   │   top   │ version │
+│  -f     │  get -A │  nodes  │         │
+├─────────┼─────────┼─────────┼─────────┤
+│ apply*  │ delete* │ busybox │  MODE   │
+│   -f    │   pod   │   run   │         │
+└─────────┴─────────┴─────────┴─────────┘
 ```
 
 #### Mode 1: helm
 ```
-┌─────────┬─────────┬─────────┐
-│ status* │history* │rollback*│  ← Row 0-x
-│         │         │         │
-├─────────┼─────────┼─────────┤
-│  list   │  repo   │ search* │  ← Row 1-x
-│   -A    │  list   │  repo   │
-├─────────┼─────────┼─────────┤
-│install* │upgrade* │ delete* │  ← Row 2-x
-│         │         │         │
-├─────────┼─────────┼─────────┤
-│template*│ values* │  MODE   │  ← Row 3-x
-│         │   get   │         │
-└─────────┴─────────┴─────────┘
+┌─────────┬─────────┬─────────┬─────────┐
+│ status* │history* │rollback*│template*│
+│         │         │         │         │
+├─────────┼─────────┼─────────┼─────────┤
+│  list   │  repo   │ search* │ values* │
+│   -A    │  list   │  repo   │   get   │
+├─────────┼─────────┼─────────┼─────────┤
+│install* │upgrade* │ delete* │  MODE   │
+│         │         │         │         │
+└─────────┴─────────┴─────────┴─────────┘
 ```
 
 #### Mode 2: debug
 ```
-┌─────────┬─────────┬─────────┐
-│ events  │   pvc   │ ingress │  ← Row 0-x
-│ sorted  │  get -A │  get -A │
-├─────────┼─────────┼─────────┤
-│top pod  │ api-res │ explain*│  ← Row 1-x
-│   -A    │         │         │
-├─────────┼─────────┼─────────┤
-│  curl*  │netshoot │  exec*  │  ← Row 2-x
-│ pod run │pod run  │   -it   │
-├─────────┼─────────┼─────────┤
-│ drain*  │ cordon* │  MODE   │  ← Row 3-x
-│         │         │         │
-└─────────┴─────────┴─────────┘
+┌─────────┬─────────┬─────────┬─────────┐
+│ events  │   pvc   │ ingress │ drain*  │
+│ sorted  │  get -A │  get -A │         │
+├─────────┼─────────┼─────────┼─────────┤
+│top pod  │ api-res │ explain*│ cordon* │
+│   -A    │         │         │         │
+├─────────┼─────────┼─────────┼─────────┤
+│  curl*  │netshoot │  exec*  │  MODE   │
+│ pod run │pod run  │   -it   │         │
+└─────────┴─────────┴─────────┴─────────┘
 ```
 
 ### Switching Modes
