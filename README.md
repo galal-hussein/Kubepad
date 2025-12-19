@@ -31,9 +31,9 @@ Using the [Ocreb modular Macropad design](https://www.thingiverse.com/thing:6450
 ### Pinout
 
 ```
-Key Matrix (3 rows × 4 columns):
-- Rows: GP10, GP11, GP12
-- Cols: GP13, GP14, GP15, GP16
+Key Matrix (4 rows × 3 columns):
+- Rows: GP10, GP11, GP12, GP13
+- Cols: GP14, GP15, GP16
 
 OLED Display:
 - SDA: GP4
@@ -107,78 +107,85 @@ cp kubepad.uf2 /media/$USER/RPI-RP2/
 
 ### Available Modes
 
-The Kubepad has 4 modes that you can cycle through by pressing the **MODE** button (bottom-right key, position 0-3):
+The Kubepad has 3 modes that you can cycle through by pressing the **MODE** button (bottom-right key, position 3-0):
+
+**Note:** Commands marked with `*` use `NoEnter` mode - they type the command but don't press Enter, allowing you to add arguments before executing.
 
 #### Mode 0: kubectl (Basic Kubernetes)
 ```
-┌────────┬────────┬────────┬──────────┐
-│ pods   │ nodes  │  svc   │  desc    │
-│ get -A │  get   │ get -A │ describe │
-├────────┼────────┼────────┼──────────┤
-│ logs   │  all   │  top   │ version  │
-│ -f     │ get -A │ nodes  │          │
-├────────┼────────┼────────┼──────────┤
-│ apply  │ delete │ config │  MODE    │
-│  -f .  │  pod   │  view  │          │
-└────────┴────────┴────────┴──────────┘
+┌─────────┬─────────┬─────────┐
+│  pods   │  nodes  │   svc   │  ← Row 0-x
+│ get -A  │   get   │  get -A │
+├─────────┼─────────┼─────────┤
+│  logs*  │   all   │   top   │  ← Row 1-x
+│  -f     │  get -A │  nodes  │
+├─────────┼─────────┼─────────┤
+│ apply*  │ delete* │ busybox │  ← Row 2-x
+│   -f    │   pod   │   run   │
+├─────────┼─────────┼─────────┤
+│  desc*  │ version │  MODE   │  ← Row 3-x
+│describe │         │         │
+└─────────┴─────────┴─────────┘
 ```
 
-#### Mode 1: kubectl-adv (Advanced Kubernetes)
+#### Mode 1: helm
 ```
-┌────────┬────────┬────────┬──────────┐
-│ events │ deploys│ secrets│   ctx    │
-│ get -A │ get -A │ get -A │ contexts │
-├────────┼────────┼────────┼──────────┤
-│  exec  │  edit  │ patch  │    ns    │
-│  -it   │        │        │namespace │
-├────────┼────────┼────────┼──────────┤
-│ scale  │rollout │  port  │  MODE    │
-│        │restart │forward │          │
-└────────┴────────┴────────┴──────────┘
-```
-
-#### Mode 2: helm
-```
-┌────────┬────────┬────────┬──────────┐
-│ status │history │rollback│ template │
-│        │        │        │          │
-├────────┼────────┼────────┼──────────┤
-│  list  │  repo  │ search │  values  │
-│   -A   │  list  │  repo  │   get    │
-├────────┼────────┼────────┼──────────┤
-│install │upgrade │ delete │  MODE    │
-│        │        │        │          │
-└────────┴────────┴────────┴──────────┘
+┌─────────┬─────────┬─────────┐
+│ status* │history* │rollback*│  ← Row 0-x
+│         │         │         │
+├─────────┼─────────┼─────────┤
+│  list   │  repo   │ search* │  ← Row 1-x
+│   -A    │  list   │  repo   │
+├─────────┼─────────┼─────────┤
+│install* │upgrade* │ delete* │  ← Row 2-x
+│         │         │         │
+├─────────┼─────────┼─────────┤
+│template*│ values* │  MODE   │  ← Row 3-x
+│         │   get   │         │
+└─────────┴─────────┴─────────┘
 ```
 
-#### Mode 3: debug
+#### Mode 2: debug
 ```
-┌────────┬────────┬────────┬──────────┐
-│ events │  pvc   │ingress │  drain   │
-│ sorted │ get -A │ get -A │          │
-├────────┼────────┼────────┼──────────┤
-│top pod │api-res │explain │  cordon  │
-│   -A   │        │        │          │
-├────────┼────────┼────────┼──────────┤
-│  curl  │netshoot│busybox │  MODE    │
-│ pod run│pod run │pod run │          │
-└────────┴────────┴────────┴──────────┘
+┌─────────┬─────────┬─────────┐
+│ events  │   pvc   │ ingress │  ← Row 0-x
+│ sorted  │  get -A │  get -A │
+├─────────┼─────────┼─────────┤
+│top pod  │ api-res │ explain*│  ← Row 1-x
+│   -A    │         │         │
+├─────────┼─────────┼─────────┤
+│  curl*  │netshoot │  exec*  │  ← Row 2-x
+│ pod run │pod run  │   -it   │
+├─────────┼─────────┼─────────┤
+│ drain*  │ cordon* │  MODE   │  ← Row 3-x
+│         │         │         │
+└─────────┴─────────┴─────────┘
 ```
 
 ### Switching Modes
 
-Press the **bottom-right key** (position 0-3, labeled MODE) to cycle through modes. The OLED will display the current mode name.
+Press the **bottom-right key** (position 3-0, labeled MODE) to cycle through modes. The OLED will display the current mode name.
+
+### NoEnter Feature
+
+Commands marked with `*` have the `NoEnter` flag set, which means:
+- The command is typed but Enter is **not** automatically pressed
+- You can add arguments (pod names, chart names, etc.) before manually pressing Enter
+- The OLED shows `...` after the label to indicate it's waiting for input
+
+For example, pressing "desc" types `kubectl describe pod ` and waits for you to type the pod name.
 
 ### Key Mappings
 
-Edit the `modes` array in [main.go](main.go:42) to customize your key mappings. Each mode has this structure:
+Edit the `modes` array in [main.go](main.go:43) to customize your key mappings. Each mode has this structure:
 
 ```go
 {
     Name: "kubectl",
     Keys: map[string]KeyMapping{
-        "2-0": {Label: "pods", Command: "kubectl get pods -A"},
-        "0-3": {Label: "MODE", Command: ""}, // Mode switch
+        "0-2": {Label: "pods", Command: "kubectl get pods -A"},
+        "3-2": {Label: "desc", Command: "kubectl describe pod ", NoEnter: true},
+        "3-0": {Label: "MODE", Command: ""}, // Mode switch
         // ... more keys
     },
 },
@@ -186,12 +193,13 @@ Edit the `modes` array in [main.go](main.go:42) to customize your key mappings. 
 
 ## Customization
 
-To add or modify commands, edit the `modes` variable in [main.go](main.go:42). The structure is simple:
+To add or modify commands, edit the `modes` variable in [main.go](main.go:43). The structure is simple:
 
 - **Name**: Mode name shown on display
 - **Keys**: Map of key positions (row-col) to commands
-- **Label**: Short label for display
+- **Label**: Short label for display (keep under 8 chars)
 - **Command**: The actual command to type
+- **NoEnter**: Set to `true` to wait for additional input before executing
 
 Example - adding a new mode:
 
@@ -199,10 +207,11 @@ Example - adding a new mode:
 {
     Name: "docker",
     Keys: map[string]KeyMapping{
-        "2-0": {Label: "ps", Command: "docker ps"},
-        "2-1": {Label: "images", Command: "docker images"},
-        "1-0": {Label: "logs", Command: "docker logs -f "},
-        "0-3": {Label: "MODE", Command: ""},
+        "0-2": {Label: "ps", Command: "docker ps"},
+        "1-2": {Label: "images", Command: "docker images"},
+        "0-1": {Label: "logs", Command: "docker logs -f ", NoEnter: true},
+        "1-0": {Label: "exec", Command: "docker exec -it ", NoEnter: true},
+        "3-0": {Label: "MODE", Command: ""},
         // ... etc
     },
 },
@@ -226,11 +235,11 @@ Kubepad/
 
 The code in [main.go](main.go) is organized into:
 
-- **Configuration** (lines 15-125) - Pin definitions and mode mappings
+- **Configuration** (lines 15-106) - Pin definitions and mode mappings
 - **Kubepad struct** - Main state management
 - **scanKeys()** - Key matrix scanning with debouncing
 - **handleKeyPress()** - Key event handling and mode switching
-- **executeCommand()** - Command execution via USB HID keyboard
+- **executeCommand()** - Command execution via USB HID keyboard (respects NoEnter flag)
 - **Display functions** - Startup screen, mode display, command feedback
 
 ## Troubleshooting
